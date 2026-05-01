@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Only the signed-in Firebase Auth user with this email can write data.
+    // To change the admin, replace the email below and redeploy the rules.
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.token.email == "chiranjivirai2005@gmail.com";
+    }
+
+    // Public portfolio pages can read all documents.
+    // Create, update, and delete operations are restricted to the admin user.
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
+
+// Deploy with Firebase CLI:
+// 1. npm install -g firebase-tools
+// 2. firebase login
+// 3. firebase init firestore
+// 4. firebase deploy --only firestore:rules
